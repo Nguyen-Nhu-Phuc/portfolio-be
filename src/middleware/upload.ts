@@ -3,7 +3,10 @@ import path from "path";
 import crypto from "crypto";
 import multer from "multer";
 
-export const UPLOADS_DIR = path.join(process.cwd(), "uploads");
+/** Vercel serverless only allows writes under /tmp. */
+export const UPLOADS_DIR = process.env.VERCEL
+  ? path.join("/tmp", "uploads")
+  : path.join(process.cwd(), "uploads");
 
 const ALLOWED_MIME_TYPES = new Set([
   "image/jpeg",

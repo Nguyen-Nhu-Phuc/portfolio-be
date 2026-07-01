@@ -63,11 +63,11 @@ export const seedData = {
       ),
     },
     {
-      icon: "/images/icon-photo.svg",
-      title: L("Photography", "Nhiếp ảnh"),
+      icon: "/images/icon-ai.svg",
+      title: L("AI solutions", "Giải pháp AI"),
       description: L(
-        "Brand photography and visual assets for product launches and marketing campaigns.",
-        "Nhiếp ảnh thương hiệu và tài sản hình ảnh cho ra mắt sản phẩm và chiến dịch marketing."
+        "LLM integrations, intelligent automation, and AI-powered features tailored to your product.",
+        "Tích hợp LLM, tự động hóa thông minh và tính năng AI phù hợp với sản phẩm của bạn."
       ),
     },
   ],

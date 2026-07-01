@@ -2,8 +2,9 @@ import fs from "fs";
 import path from "path";
 import crypto from "crypto";
 import multer from "multer";
+import { isCloudinaryConfigured } from "../config/cloudinary";
 
-/** Vercel serverless only allows writes under /tmp. */
+/** Local disk fallback when Cloudinary is not configured. */
 export const UPLOADS_DIR = process.env.VERCEL
   ? path.join("/tmp", "uploads")
   : path.join(process.cwd(), "uploads");
@@ -15,23 +16,28 @@ const ALLOWED_MIME_TYPES = new Set([
   "image/gif",
 ]);
 
-if (!fs.existsSync(UPLOADS_DIR)) {
+if (!isCloudinaryConfigured() && !fs.existsSync(UPLOADS_DIR)) {
   fs.mkdirSync(UPLOADS_DIR, { recursive: true });
 }
 
-const storage = multer.diskStorage({
-  destination: (_req, _file, cb) => {
-    cb(null, UPLOADS_DIR);
-  },
-  filename: (_req, file, cb) => {
-    const ext = path.extname(file.originalname).toLowerCase() || ".jpg";
-    const safeExt = [".jpg", ".jpeg", ".png", ".webp", ".gif"].includes(ext)
-      ? ext
-      : ".jpg";
-    const name = `${Date.now()}-${crypto.randomBytes(8).toString("hex")}${safeExt}`;
-    cb(null, name);
-  },
-});
+function safeFilename(originalname: string): string {
+  const ext = path.extname(originalname).toLowerCase() || ".jpg";
+  const safeExt = [".jpg", ".jpeg", ".png", ".webp", ".gif"].includes(ext)
+    ? ext
+    : ".jpg";
+  return `${Date.now()}-${crypto.randomBytes(8).toString("hex")}${safeExt}`;
+}
+
+const storage = isCloudinaryConfigured()
+  ? multer.memoryStorage()
+  : multer.diskStorage({
+      destination: (_req, _file, cb) => {
+        cb(null, UPLOADS_DIR);
+      },
+      filename: (_req, file, cb) => {
+        cb(null, safeFilename(file.originalname));
+      },
+    });
 
 export const imageUpload = multer({
   storage,

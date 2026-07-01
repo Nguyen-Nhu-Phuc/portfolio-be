@@ -4,7 +4,12 @@ import Admin from "../models/Admin";
 import Contact from "../models/Contact";
 import { verifyPassword, hashPassword } from "../utils/password";
 import { requireAdmin, signAdminToken, AdminRequest } from "../middleware/adminAuth";
-import { imageUpload, publicUploadUrl } from "../middleware/upload";
+import { isCloudinaryConfigured } from "../config/cloudinary";
+import { uploadImageToCloudinary } from "../services/cloudinaryUpload";
+import {
+  imageUpload,
+  publicUploadUrl,
+} from "../middleware/upload";
 import { rateLimit } from "../middleware/rateLimit";
 import { sanitizePortfolioUpdate } from "../utils/sanitizePortfolio";
 
@@ -179,6 +184,22 @@ router.post(
 
       if (!req.file) {
         res.status(400).json({ message: "No image file provided" });
+        return;
+      }
+
+      if (isCloudinaryConfigured()) {
+        if (!req.file.buffer) {
+          res.status(500).json({ message: "Upload buffer missing" });
+          return;
+        }
+
+        uploadImageToCloudinary(req.file.buffer)
+          .then((url) => res.json({ url }))
+          .catch((err: unknown) => {
+            const message =
+              err instanceof Error ? err.message : "Cloudinary upload failed";
+            res.status(500).json({ message });
+          });
         return;
       }
 

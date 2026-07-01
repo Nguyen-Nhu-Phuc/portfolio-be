@@ -24,6 +24,8 @@ export function localizePortfolio(doc: Record<string, unknown>, locale: Locale) 
   const experience = (doc.experience as Record<string, unknown>[]) ?? [];
   const skills = (doc.skills as Record<string, unknown>[]) ?? [];
   const projects = (doc.projects as Record<string, unknown>[]) ?? [];
+  const projectCategories =
+    (doc.projectCategories as Record<string, unknown>[]) ?? [];
   const blogs = (doc.blogs as Record<string, unknown>[]) ?? [];
   const clients = doc.clients ?? [];
 
@@ -85,6 +87,10 @@ export function localizePortfolio(doc: Record<string, unknown>, locale: Locale) 
         : undefined,
       techStack: p.techStack,
       featured: p.featured,
+    })),
+    projectCategories: projectCategories.map((c) => ({
+      slug: c.slug as string,
+      label: loc(c.label as LocalizedString, locale),
     })),
     blogs: blogs.map((b) => ({
       title: loc(b.title as LocalizedString, locale),

@@ -56,6 +56,11 @@ export interface ISkill {
   percentage: number;
 }
 
+export interface IProjectCategory {
+  slug: string;
+  label: LocalizedString;
+}
+
 export interface IProject {
   title: LocalizedString;
   category: LocalizedString;
@@ -86,6 +91,7 @@ export interface IPortfolio extends Document {
   experience: ITimelineItem[];
   skills: ISkill[];
   projects: IProject[];
+  projectCategories: IProjectCategory[];
   blogs: IBlogPost[];
 }
 
@@ -160,6 +166,12 @@ const portfolioSchema = new Schema<IPortfolio>(
         description: localizedStringSchema,
         techStack: [String],
         featured: Boolean,
+      },
+    ],
+    projectCategories: [
+      {
+        slug: String,
+        label: localizedStringSchema,
       },
     ],
     blogs: [

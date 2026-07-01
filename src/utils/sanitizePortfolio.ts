@@ -8,6 +8,7 @@ const PORTFOLIO_KEYS = [
   "experience",
   "skills",
   "projects",
+  "projectCategories",
   "blogs",
 ] as const;
 

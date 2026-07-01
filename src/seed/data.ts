@@ -173,6 +173,11 @@ export const seedData = {
     { name: L("MongoDB", "MongoDB"), percentage: 78 },
     { name: L("DevOps / CI", "DevOps / CI"), percentage: 72 },
   ],
+  projectCategories: [
+    { slug: "web design", label: L("Web design", "Thiết kế web") },
+    { slug: "applications", label: L("Applications", "Ứng dụng") },
+    { slug: "web development", label: L("Web development", "Phát triển web") },
+  ],
   projects: [
     {
       title: L("Finance", "Finance"),

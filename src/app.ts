@@ -5,7 +5,6 @@ import { connectDB } from "./config/db";
 import portfolioRoutes from "./routes/portfolio";
 import contactRoutes from "./routes/contact";
 import adminRoutes from "./routes/admin";
-import { isCloudinaryConfigured } from "./config/cloudinary";
 import { UPLOADS_DIR } from "./middleware/upload";
 import { securityHeaders } from "./middleware/security";
 
@@ -28,9 +27,8 @@ app.use(
   })
 );
 app.use(express.json({ limit: "2mb" }));
-if (!isCloudinaryConfigured()) {
-  app.use("/uploads", express.static(UPLOADS_DIR));
-}
+// Always serve local uploads (legacy entries and dev fallback when Cloudinary is enabled).
+app.use("/uploads", express.static(UPLOADS_DIR));
 
 app.use(async (_req, _res, next) => {
   const uri = process.env.MONGODB_URI;

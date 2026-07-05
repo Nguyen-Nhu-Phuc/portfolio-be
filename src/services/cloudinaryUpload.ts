@@ -1,13 +1,20 @@
 import { cloudinary } from "../config/cloudinary";
 
-export async function uploadImageToCloudinary(buffer: Buffer): Promise<string> {
+export async function uploadImageToCloudinary(
+  buffer: Buffer,
+  mimetype?: string
+): Promise<string> {
   const folder = process.env.CLOUDINARY_FOLDER || "portfolio";
+  const isSvg =
+    mimetype === "image/svg+xml" ||
+    mimetype === "image/svg";
 
   const result = await new Promise<{ secure_url: string }>((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
       {
         folder,
         resource_type: "image",
+        ...(isSvg ? { format: "svg" } : {}),
       },
       (error, uploadResult) => {
         if (error || !uploadResult?.secure_url) {

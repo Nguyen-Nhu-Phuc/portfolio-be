@@ -193,7 +193,7 @@ router.post(
           return;
         }
 
-        uploadImageToCloudinary(req.file.buffer)
+        uploadImageToCloudinary(req.file.buffer, req.file.mimetype)
           .then((url) => res.json({ url }))
           .catch((err: unknown) => {
             const message =

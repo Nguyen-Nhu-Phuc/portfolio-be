@@ -5,6 +5,7 @@ export interface ISocialLink {
   platform: string;
   url: string;
   icon: string;
+  logo?: string;
 }
 
 export interface IProfile {
@@ -118,7 +119,7 @@ const portfolioSchema = new Schema<IPortfolio>(
       resumeUrl: String,
       yearsExperience: Number,
       remoteFriendly: Boolean,
-      socialLinks: [{ platform: String, url: String, icon: String }],
+      socialLinks: [{ platform: String, url: String, icon: String, logo: String }],
     },
     about: {
       en: [String],

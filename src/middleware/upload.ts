@@ -14,7 +14,30 @@ const ALLOWED_MIME_TYPES = new Set([
   "image/png",
   "image/webp",
   "image/gif",
+  "image/svg+xml",
+  "image/svg",
+  "image/heic",
+  "image/heif",
+  "image/avif",
 ]);
+
+const ALLOWED_EXTENSIONS = new Set([
+  ".jpg",
+  ".jpeg",
+  ".png",
+  ".webp",
+  ".gif",
+  ".svg",
+  ".heic",
+  ".heif",
+  ".avif",
+]);
+
+function isAllowedUpload(file: Express.Multer.File): boolean {
+  if (ALLOWED_MIME_TYPES.has(file.mimetype)) return true;
+  const ext = path.extname(file.originalname).toLowerCase();
+  return ALLOWED_EXTENSIONS.has(ext);
+}
 
 if (!isCloudinaryConfigured() && !fs.existsSync(UPLOADS_DIR)) {
   fs.mkdirSync(UPLOADS_DIR, { recursive: true });
@@ -22,9 +45,7 @@ if (!isCloudinaryConfigured() && !fs.existsSync(UPLOADS_DIR)) {
 
 function safeFilename(originalname: string): string {
   const ext = path.extname(originalname).toLowerCase() || ".jpg";
-  const safeExt = [".jpg", ".jpeg", ".png", ".webp", ".gif"].includes(ext)
-    ? ext
-    : ".jpg";
+  const safeExt = ALLOWED_EXTENSIONS.has(ext) ? ext : ".jpg";
   return `${Date.now()}-${crypto.randomBytes(8).toString("hex")}${safeExt}`;
 }
 
@@ -43,11 +64,11 @@ export const imageUpload = multer({
   storage,
   limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter: (_req, file, cb) => {
-    if (ALLOWED_MIME_TYPES.has(file.mimetype)) {
+    if (isAllowedUpload(file)) {
       cb(null, true);
       return;
     }
-    cb(new Error("Only JPEG, PNG, WebP, and GIF images are allowed"));
+    cb(new Error("Only JPEG, PNG, WebP, GIF, SVG, HEIC, and AVIF images are allowed"));
   },
 });
 
